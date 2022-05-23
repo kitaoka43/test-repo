@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:riverpod_example/data/count_data.dart';
 import 'package:riverpod_example/provider.dart';
 
 void main() {
@@ -43,34 +44,53 @@ class MyHomePage extends StatelessWidget {
                 ref.watch(messageProvider),
               ),
               Text(
-                ref.watch(countProvider.state).state.toString(),
+                ref.watch(countDataProvider.state).state.count.toString(),
                 style: Theme.of(context).textTheme.headline4,
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   FloatingActionButton(
-                    onPressed: () => ref.read(countProvider.state).state++,
+                    onPressed: () {
+                      CountData countData = ref.read(countDataProvider.state).state;
+                      ref.read(countDataProvider.state).state =
+                          countData.copyWith(
+                            count: countData.count + 1,
+                            countUp: countData.countUp + 1,
+                          );
+                    },
                     child: const Icon(CupertinoIcons.plus),
                   ),
                   FloatingActionButton(
-                    onPressed: () => ref.read(countProvider.state).state--,
+                    onPressed: () {
+                      CountData countData = ref.read(countDataProvider.state).state;
+                      ref.read(countDataProvider.state).state =
+                          countData.copyWith(
+                              count: countData.count - 1,
+                              countDown: countData.countDown - 1
+                          );
+                    },
                     child: const Icon(CupertinoIcons.minus),
                   ),
                 ],
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: const <Widget>[
-                  Text('1'),
-                  Text('2')
+                children: <Widget>[
+                  Text(
+                      ref.watch(countDataProvider.state.select((value) => value.state.countUp)).toString()
+                  ), Text(
+                      ref.watch(countDataProvider.state.select((value) => value.state.countDown)).toString()
+                  ),
                 ],
               )
             ],
           ),
         ),
         floatingActionButton: FloatingActionButton(
-          onPressed: () => ref.read(countProvider.state).state = 0,
+          onPressed: () {
+            ref.read(countDataProvider.state).state = const CountData(count: 0, countUp: 0, countDown: 0);
+          },
           tooltip: 'Increment',
           child: const Icon(Icons.refresh),
         ),
