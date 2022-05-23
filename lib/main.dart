@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_example/provider.dart';
@@ -27,40 +28,53 @@ class MyHomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print('myhomepage re');
-    return Scaffold(
-      appBar: AppBar(
-        title: Consumer(
-            builder: (context, ref, child) => Text(ref.watch(titleProvider))),
-      ),
-      //test
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Consumer(
-              builder: (context, ref, chid) => Text(
+    return Consumer(builder: (context, ref, child) {
+      return Scaffold(
+        appBar: AppBar(
+          title: Consumer(
+              builder: (context, ref, child) => Text(ref.watch(titleProvider))),
+        ),
+        //test
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Text(
                 ref.watch(messageProvider),
               ),
-            ),
-            Consumer(builder: (context, ref, child) {
-              print('count re');
-              return Text(
+              Text(
                 ref.watch(countProvider.state).state.toString(),
                 style: Theme.of(context).textTheme.headline4,
-              );
-            }),
-          ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  FloatingActionButton(
+                    onPressed: () => ref.read(countProvider.state).state++,
+                    child: const Icon(CupertinoIcons.plus),
+                  ),
+                  FloatingActionButton(
+                    onPressed: () => ref.read(countProvider.state).state--,
+                    child: const Icon(CupertinoIcons.minus),
+                  ),
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: const <Widget>[
+                  Text('1'),
+                  Text('2')
+                ],
+              )
+            ],
+          ),
         ),
-      ),
-      floatingActionButton: Consumer(builder: (context, ref, child) {
-        print('buttun re');
-        return FloatingActionButton(
-          onPressed: () => ref.read(countProvider.state).state++,
+        floatingActionButton: FloatingActionButton(
+          onPressed: () => ref.read(countProvider.state).state = 0,
           tooltip: 'Increment',
-          child: const Icon(Icons.add),
-        );
-      }),
-    );
+          child: const Icon(Icons.refresh),
+        ),
+      );
+    });
   }
 }
